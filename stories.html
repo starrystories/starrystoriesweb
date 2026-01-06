@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Browse stories - StarryStories">
+    <title>Stories - StarryStories</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/components.css">
+
+    <style>
+        .page-container {
+            min-height: 100vh;
+            padding: var(--spacing-m);
+            padding-top: 80px;
+            padding-bottom: 100px;
+        }
+
+        .stories-list {
+            max-width: 700px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-m);
+        }
+
+        .story-card {
+            display: flex;
+            gap: var(--spacing-m);
+            padding: var(--spacing-m);
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-m);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+        }
+
+        .story-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateX(4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .story-thumbnail {
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-s);
+            object-fit: cover;
+            background: var(--bg-surface-alt);
+            flex-shrink: 0;
+        }
+
+        .story-thumbnail.no-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        .story-content {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+
+        .story-title {
+            font-size: var(--font-size-body);
+            font-weight: var(--font-weight-semibold);
+            color: var(--text-primary);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .story-summary {
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: var(--line-height-relaxed);
+        }
+
+        .story-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-m);
+            font-size: var(--font-size-caption);
+            color: var(--text-secondary);
+        }
+
+        /* Loading skeleton */
+        .skeleton-card {
+            display: flex;
+            gap: var(--spacing-m);
+            padding: var(--spacing-m);
+            background: var(--bg-surface);
+            border-radius: var(--radius-m);
+        }
+
+        .skeleton-thumb {
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-s);
+        }
+
+        .skeleton-lines {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+
+        .skeleton-line {
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .skeleton-line:nth-child(1) {
+            width: 80%;
+        }
+
+        .skeleton-line:nth-child(2) {
+            width: 100%;
+        }
+
+        .skeleton-line:nth-child(3) {
+            width: 60%;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-xxl);
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: var(--spacing-m);
+        }
+
+        /* Error state */
+        .error-state {
+            text-align: center;
+            padding: var(--spacing-xxl);
+            color: var(--text-secondary);
+        }
+
+        .retry-btn {
+            margin-top: var(--spacing-m);
+        }
+
+        /* Category header */
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-s);
+            margin-bottom: var(--spacing-l);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .category-icon {
+            font-size: 28px;
+        }
+
+        .category-name {
+            font-size: var(--font-size-heading);
+            font-weight: var(--font-weight-semibold);
+        }
+
+        /* Background */
+        .bg-gradient {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(91, 124, 250, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Load More Button */
+        .load-more-container {
+            text-align: center;
+            padding: var(--spacing-l) 0;
+        }
+
+        /* Story Options Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-surface);
+            border-top-left-radius: var(--radius-xl);
+            border-top-right-radius: var(--radius-xl);
+            width: 100%;
+            max-width: 500px;
+            padding: var(--spacing-xl);
+            padding-bottom: calc(var(--spacing-xl) + env(safe-area-inset-bottom));
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-l);
+        }
+
+        .modal-title {
+            font-size: var(--font-size-heading);
+            font-weight: var(--font-weight-semibold);
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-surface-alt);
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-section {
+            margin-bottom: var(--spacing-l);
+        }
+
+        .modal-section-title {
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-s);
+        }
+
+        /* Duration Selector */
+        .duration-options {
+            display: flex;
+            gap: var(--spacing-s);
+        }
+
+        .duration-option {
+            flex: 1;
+            padding: var(--spacing-m);
+            border: 1px solid var(--divider);
+            border-radius: var(--radius-m);
+            background: transparent;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-align: center;
+        }
+
+        .duration-option:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .duration-option.selected {
+            border-color: var(--accent-primary);
+            background: rgba(91, 124, 250, 0.1);
+        }
+
+        .duration-value {
+            font-size: var(--font-size-heading);
+            font-weight: var(--font-weight-semibold);
+        }
+
+        .duration-label {
+            font-size: var(--font-size-caption);
+            color: var(--text-secondary);
+        }
+
+        /* Voice Selector */
+        .voice-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-s);
+        }
+
+        .voice-option {
+            padding: var(--spacing-m);
+            border: 1px solid var(--divider);
+            border-radius: var(--radius-m);
+            background: transparent;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-align: center;
+        }
+
+        .voice-option:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .voice-option.selected {
+            border-color: var(--accent-primary);
+            background: rgba(91, 124, 250, 0.1);
+        }
+
+        .voice-option.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .voice-icon {
+            font-size: 24px;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .voice-name {
+            font-size: var(--font-size-small);
+            font-weight: var(--font-weight-medium);
+        }
+
+        .coming-soon {
+            font-size: var(--font-size-caption);
+            color: var(--text-secondary);
+        }
+
+        /* Child Name Input */
+        .child-name-input {
+            width: 100%;
+            padding: var(--spacing-m);
+            border: 1px solid var(--divider);
+            border-radius: var(--radius-m);
+            background: var(--bg-surface-alt);
+            color: var(--text-primary);
+            font-size: var(--font-size-body);
+            outline: none;
+            transition: border-color var(--transition-fast);
+        }
+
+        .child-name-input:focus {
+            border-color: var(--accent-primary);
+        }
+
+        .child-name-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .play-story-btn {
+            width: 100%;
+            margin-top: var(--spacing-m);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+
+    <!-- Navigation -->
+    <nav class="nav-header">
+        <a href="categories.html" class="nav-back">← Back</a>
+        <span class="nav-title">Stories</span>
+        <div style="width: 60px;"></div>
+    </nav>
+
+    <main class="page-container">
+        <div class="category-header" id="category-header">
+            <span class="category-icon" id="category-icon">📚</span>
+            <span class="category-name" id="category-name">Stories</span>
+        </div>
+
+        <div class="stories-list" id="stories-list">
+            <!-- Loading skeletons -->
+            <div class="skeleton-card shimmer">
+                <div class="skeleton-thumb shimmer"></div>
+                <div class="skeleton-lines">
+                    <div class="skeleton-line shimmer"></div>
+                    <div class="skeleton-line shimmer"></div>
+                    <div class="skeleton-line shimmer"></div>
+                </div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton-thumb shimmer"></div>
+                <div class="skeleton-lines">
+                    <div class="skeleton-line shimmer"></div>
+                    <div class="skeleton-line shimmer"></div>
+                    <div class="skeleton-line shimmer"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Load More Button -->
+        <div class="load-more-container" id="load-more-container" style="display: none;">
+            <button class="btn btn-secondary" id="load-more-btn" onclick="loadMoreStories()">
+                Load More Stories
+            </button>
+        </div>
+    </main>
+
+    <!-- Story Options Modal -->
+    <div class="modal-overlay" id="story-modal" onclick="closeModalOnOverlay(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modal-story-title">Story Options</h2>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+
+            <!-- Voice Selection -->
+            <div class="modal-section">
+                <div class="modal-section-title">Narrator Voice</div>
+                <div class="voice-options">
+                    <button class="voice-option selected" data-voice="female" onclick="selectVoice('female')">
+                        <div class="voice-icon">👩</div>
+                        <div class="voice-name">Female</div>
+                    </button>
+                    <button class="voice-option disabled" data-voice="male">
+                        <div class="voice-icon">👨</div>
+                        <div class="voice-name">Male</div>
+                        <div class="coming-soon">Coming Soon</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Play Button -->
+            <button class="btn btn-primary btn-lg play-story-btn" onclick="confirmPlayStory()">
+                ▶ Play Story
+            </button>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/api.js?v=4"></script>
+    <script src="js/animations.js"></script>
+    <script>
+        const language = Storage.getLanguage() || 'en';
+        const urlParams = new URLSearchParams(window.location.search);
+        const category = urlParams.get('category') || Storage.getCategory() || 'calm_bedtime';
+
+        let stories = [];
+        let hasMore = true;
+        let isLoading = false;
+        let selectedStoryIndex = null;
+        let selectedDuration = 5;
+        let selectedVoice = 'female';
+
+        function updateCategoryHeader() {
+            const cat = Data.CATEGORIES.find(c => c.id === category);
+            if (cat) {
+                document.getElementById('category-icon').textContent = cat.icon;
+                document.getElementById('category-name').textContent = cat.label;
+            }
+        }
+
+        function renderStory(story, index) {
+            const thumbnail = story.thumbnail
+                ? `<img src="${story.thumbnail}" alt="" class="story-thumbnail" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                   <div class="story-thumbnail no-image" style="display: none;">📖</div>`
+                : `<div class="story-thumbnail no-image">📖</div>`;
+
+            return `
+                <div class="story-card animate-on-scroll fade-up" 
+                     style="animation-delay: ${index * 50}ms"
+                     onclick="openStoryModal(${index})">
+                    ${thumbnail}
+                    <div class="story-content">
+                        <div class="story-title">${story.title}</div>
+                        <div class="story-summary">${story.summary || ''}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderStories(append = false) {
+            const list = document.getElementById('stories-list');
+
+            if (stories.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🌙</div>
+                        <p>No stories found. Try another category!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const html = stories.map((story, i) => renderStory(story, i)).join('');
+
+            if (append) {
+                list.innerHTML += html;
+            } else {
+                list.innerHTML = html;
+            }
+
+            // Show/hide load more button
+            document.getElementById('load-more-container').style.display = hasMore ? 'block' : 'none';
+
+            Animations.initScrollAnimations();
+        }
+
+        function renderError(message) {
+            document.getElementById('stories-list').innerHTML = `
+                <div class="error-state">
+                    <div class="empty-icon">😢</div>
+                    <p>${message}</p>
+                    <button class="btn btn-secondary retry-btn" onclick="loadStories()">Try Again</button>
+                </div>
+            `;
+        }
+
+        async function loadStories() {
+            if (isLoading) return;
+            isLoading = true;
+
+            try {
+                const excludeTitles = stories.map(s => s.title);
+                const response = await API.getStories(language, category, excludeTitles);
+                stories = response.stories || [];
+                hasMore = response.hasMore !== false;
+                renderStories();
+            } catch (error) {
+                console.error('Failed to load stories:', error);
+                renderError('Failed to load stories. Please try again.');
+            } finally {
+                isLoading = false;
+            }
+        }
+
+        async function loadMoreStories() {
+            if (isLoading || !hasMore) return;
+            isLoading = true;
+
+            const btn = document.getElementById('load-more-btn');
+            btn.textContent = 'Loading...';
+            btn.disabled = true;
+
+            try {
+                const excludeTitles = stories.map(s => s.title);
+                console.log('📚 Loading more stories, excluding:', excludeTitles.length, 'stories');
+
+                const response = await API.getStories(language, category, excludeTitles);
+                const newStories = response.stories || [];
+                console.log('📬 Received', newStories.length, 'new stories');
+
+                hasMore = response.hasMore !== false && newStories.length > 0;
+
+                if (newStories.length > 0) {
+                    const startIndex = stories.length;
+                    stories = [...stories, ...newStories];
+
+                    // Append new stories using insertAdjacentHTML for proper DOM update
+                    const list = document.getElementById('stories-list');
+                    const newCardsHTML = newStories.map((story, i) => renderStory(story, startIndex + i)).join('');
+                    list.insertAdjacentHTML('beforeend', newCardsHTML);
+
+                    Animations.initScrollAnimations();
+                }
+
+                // Update button visibility
+                document.getElementById('load-more-container').style.display = hasMore ? 'block' : 'none';
+
+            } catch (error) {
+                console.error('Failed to load more stories:', error);
+            } finally {
+                isLoading = false;
+                btn.textContent = 'Load More Stories';
+                btn.disabled = false;
+            }
+        }
+
+        // Modal functions
+        function openStoryModal(index) {
+            selectedStoryIndex = index;
+            const story = stories[index];
+            document.getElementById('modal-story-title').textContent = story.title;
+            document.getElementById('story-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('story-modal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function closeModalOnOverlay(event) {
+            if (event.target === document.getElementById('story-modal')) {
+                closeModal();
+            }
+        }
+
+        function selectDuration(duration) {
+            selectedDuration = duration;
+            document.querySelectorAll('.duration-option').forEach(btn => {
+                btn.classList.toggle('selected', parseInt(btn.dataset.duration) === duration);
+            });
+        }
+
+        function selectVoice(voice) {
+            selectedVoice = voice;
+            document.querySelectorAll('.voice-option:not(.disabled)').forEach(btn => {
+                btn.classList.toggle('selected', btn.dataset.voice === voice);
+            });
+        }
+
+        function confirmPlayStory() {
+            if (selectedStoryIndex === null) return;
+
+            const story = stories[selectedStoryIndex];
+
+            // Store story data and options for player page
+            sessionStorage.setItem('current_story', JSON.stringify(story));
+            sessionStorage.setItem('story_options', JSON.stringify({
+                duration: 5,  // Fixed at 5 minutes for web
+                voice: selectedVoice
+            }));
+
+            closeModal();
+            window.location.href = 'player.html';
+        }
+
+        // Check if language & category are set
+        if (!language) {
+            window.location.href = 'language.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCategoryHeader();
+            loadStories();
+        });
+    </script>
+</body>
+
+</html>

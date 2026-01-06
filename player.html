@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Listen to story - StarryStories">
+    <title>Now Playing - StarryStories</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/components.css">
+
+    <style>
+        /* Prevent horizontal scroll globally */
+        html,
+        body {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+
+        /* Full screen container */
+        .story-player-screen {
+            height: 100vh;
+            height: 100dvh;
+            width: 100%;
+            background: radial-gradient(circle at top, #1a1d2b, #0b0d14);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+
+        /* Close button */
+        .close-btn {
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.6);
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Content area (image + text) */
+        .story-content {
+            flex: 1;
+            width: 100%;
+            max-width: 720px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;
+            padding-top: 50px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* IMAGE AREA - 45% */
+        .story-image-container {
+            width: 100%;
+            flex: 0 0 45%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .story-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 20px;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 100%;
+            background: rgba(30, 32, 48, 0.8);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+        }
+
+        /* TEXT AREA - fills remaining space */
+        .story-text-container {
+            flex: 1;
+            width: 100%;
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        /* Title */
+        .story-title {
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        /* Scrollable text */
+        .story-text {
+            flex: 1;
+            width: 100%;
+            overflow-y: auto;
+            padding: 0 8px 12px;
+            box-sizing: border-box;
+            color: #d6d9ff;
+            font-size: 15px;
+            line-height: 1.7;
+            text-align: center;
+            white-space: pre-wrap;
+            min-height: 0;
+        }
+
+        /* Hide scrollbar */
+        .story-text::-webkit-scrollbar {
+            width: 0;
+        }
+
+        .story-text {
+            scrollbar-width: none;
+        }
+
+        /* PLAYER AT BOTTOM */
+        .audio-player {
+            width: 100%;
+            max-width: 720px;
+            padding: 14px 16px 24px;
+            padding-bottom: calc(24px + env(safe-area-inset-bottom));
+            background: linear-gradient(to top, rgba(11, 13, 20, 0.95), rgba(11, 13, 20, 0.6));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            box-sizing: border-box;
+        }
+
+        /* Progress bar */
+        .progress-container {
+            width: 100%;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-primary, #5B7CFA);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 4px;
+        }
+
+        /* Playback buttons */
+        .playback-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .btn-control {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-control:hover {
+            color: #fff;
+        }
+
+        .btn-play {
+            width: 56px;
+            height: 56px;
+            background: var(--accent-gradient, linear-gradient(135deg, #5B7CFA 0%, #8B5CF6 100%));
+            color: white;
+            font-size: 22px;
+            box-shadow: 0 4px 20px rgba(91, 124, 250, 0.4);
+        }
+
+        /* Loading state */
+        .loading-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 32px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top-color: var(--accent-primary, #5B7CFA);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .loading-messages {
+            font-size: 16px;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="story-player-screen">
+        <button class="close-btn" onclick="goBack()">✕</button>
+
+        <!-- Loading State -->
+        <div class="loading-state" id="loading-state">
+            <div class="loading-spinner"></div>
+            <div class="loading-messages" id="loading-message">Preparing your story...</div>
+            <p class="loading-text">This may take up to a minute for new stories</p>
+        </div>
+
+        <!-- Player Content (hidden initially) -->
+        <div class="story-content" id="player-content" style="display: none;">
+            <!-- Image Area -->
+            <div class="story-image-container">
+                <img src="" alt="Story illustration" id="artwork-image" style="display: none;">
+                <div class="image-placeholder" id="artwork-placeholder">🌟</div>
+            </div>
+
+            <!-- Text Area -->
+            <div class="story-text-container">
+                <h2 class="story-title" id="player-title">Story Title</h2>
+                <div class="story-text" id="story-text">Loading story...</div>
+            </div>
+        </div>
+
+        <!-- Audio Player at Bottom -->
+        <div class="audio-player" id="audio-player" style="display: none;">
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar" onclick="seekAudio(event)">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="time-display">
+                    <span id="current-time">0:00</span>
+                    <span id="total-time">0:00</span>
+                </div>
+            </div>
+            <div class="playback-buttons">
+                <button class="btn-control" onclick="skipBackward()">⏪</button>
+                <button class="btn-control btn-play" id="play-btn" onclick="togglePlay()">▶</button>
+                <button class="btn-control" onclick="skipForward()">⏩</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/storage.js"></script>
+    <script src="js/api.js?v=4"></script>
+    <script src="js/audio.js?v=4"></script>
+    <script>
+        const language = Storage.getLanguage() || 'en';
+        let story = null;
+        let storyOptions = null;
+        let player = null;
+        let storyData = null;
+        let isTextVisible = false;
+        let currentImageIndex = 0;
+        let images = [];
+
+        const LOADING_MESSAGES = [
+            'Weaving magical tales...',
+            'Sprinkling story dust...',
+            'Gathering moonbeams...',
+            'Calling the story sprites...',
+            'Stitching dreams together...'
+        ];
+
+        function goBack() {
+            if (player) player.destroy();
+            window.history.back();
+        }
+
+        function rotateLoadingMessages() {
+            let index = 0;
+            setInterval(() => {
+                index = (index + 1) % LOADING_MESSAGES.length;
+                document.getElementById('loading-message').textContent = LOADING_MESSAGES[index];
+            }, 3000);
+        }
+
+        function showPlayer() {
+            document.getElementById('loading-state').style.display = 'none';
+            document.getElementById('player-content').style.display = 'flex';
+            document.getElementById('audio-player').style.display = 'flex';
+        }
+
+        function updateUI() {
+            document.getElementById('player-title').textContent = story.title;
+
+            // Set artwork image
+            images = storyData.images || [];
+            console.log('📷 Images received:', images.length, 'images');
+
+            if (images.length > 0) {
+                showImage(0);
+            } else if (story.thumbnail) {
+                // Fallback to story thumbnail
+                const img = document.getElementById('artwork-image');
+                img.src = story.thumbnail;
+                img.style.display = 'block';
+                img.onerror = () => {
+                    img.style.display = 'none';
+                    document.getElementById('artwork-placeholder').style.display = 'flex';
+                };
+                document.getElementById('artwork-placeholder').style.display = 'none';
+            }
+
+            // Set story text (always visible in new layout)
+            if (storyData.storyText) {
+                document.getElementById('story-text').textContent = storyData.storyText;
+            } else {
+                document.getElementById('story-text').textContent = 'Story text loading...';
+            }
+        }
+
+        function showImage(index) {
+            if (images.length === 0) return;
+
+            currentImageIndex = index;
+            const imageObj = images[index];
+
+            let imageUrl;
+
+            // Handle different image formats from backend
+            if (typeof imageObj === 'string') {
+                // Already a URL string
+                imageUrl = imageObj;
+                if (!imageUrl.startsWith('http') && !imageUrl.startsWith('data:')) {
+                    imageUrl = `http://34.47.249.168:3001${imageUrl}`;
+                }
+            } else if (imageObj && imageObj.imageData) {
+                // Base64 image data from cache
+                imageUrl = `data:image/jpeg;base64,${imageObj.imageData}`;
+            } else if (imageObj && imageObj.url) {
+                imageUrl = imageObj.url;
+            } else {
+                console.warn('❌ Unknown image format:', imageObj);
+                // Try next image
+                if (currentImageIndex + 1 < images.length) {
+                    showImage(currentImageIndex + 1);
+                }
+                return;
+            }
+
+            console.log('🖼️ Showing image', index + 1, '/', images.length);
+
+            const img = document.getElementById('artwork-image');
+            img.src = imageUrl;
+            img.style.display = 'block';
+            img.onerror = () => {
+                console.warn('❌ Image failed to load at index:', index);
+                // Try next image or show placeholder
+                if (currentImageIndex + 1 < images.length) {
+                    showImage(currentImageIndex + 1);
+                } else {
+                    img.style.display = 'none';
+                    document.getElementById('artwork-placeholder').style.display = 'flex';
+                }
+            };
+            document.getElementById('artwork-placeholder').style.display = 'none';
+        }
+
+        function initAudioPlayer() {
+            player = new AudioPlayer();
+
+            player.onTimeUpdate = (current, duration) => {
+                document.getElementById('progress-fill').style.width = `${player.getProgress()}%`;
+                document.getElementById('current-time').textContent = AudioPlayer.formatTime(current);
+
+                // Rotate images based on progress (if multiple images)
+                if (images.length > 1) {
+                    const segmentLength = duration / images.length;
+                    const newIndex = Math.min(Math.floor(current / segmentLength), images.length - 1);
+                    if (newIndex !== currentImageIndex) {
+                        showImage(newIndex);
+                    }
+                }
+            };
+
+            player.onLoaded = (duration) => {
+                document.getElementById('total-time').textContent = AudioPlayer.formatTime(duration);
+            };
+
+            player.onEnded = () => {
+                document.getElementById('play-btn').textContent = '▶';
+            };
+
+            // Set playback speed to 0.7x for all languages
+            const playbackRate = 0.7;
+            player.load(storyData.audioUrl, playbackRate);
+        }
+
+        function togglePlay() {
+            if (!player) return;
+            player.toggle();
+            document.getElementById('play-btn').textContent = player.isPlaying ? '⏸' : '▶';
+        }
+
+        function seekAudio(event) {
+            if (!player) return;
+            const bar = event.currentTarget;
+            const rect = bar.getBoundingClientRect();
+            const percent = (event.clientX - rect.left) / rect.width;
+            player.seekPercent(percent);
+        }
+
+        function skipBackward() {
+            if (!player) return;
+            player.seek(Math.max(0, player.currentTime - 10));
+        }
+
+        function skipForward() {
+            if (!player) return;
+            player.seek(player.currentTime + 10);
+        }
+
+        function toggleStoryText() {
+            isTextVisible = !isTextVisible;
+            document.getElementById('story-text-container').style.display = isTextVisible ? 'block' : 'none';
+            document.getElementById('toggle-text-btn').textContent = isTextVisible ? 'Hide Story Text' : 'Show Story Text';
+        }
+
+        async function loadStory() {
+            try {
+                // Start loading message rotation
+                rotateLoadingMessages();
+
+                // Get options from session storage (simplified: just voice)
+                const duration = 5; // Fixed at 5 minutes for web
+                const voice = storyOptions?.voice || 'female';
+
+                console.log('🎭 Playing story:', story.title, 'with voice:', voice);
+
+                // Call play API (matches mobile app exactly)
+                storyData = await API.playStory(story, language, duration, voice);
+
+                console.log('📥 Story data received:', storyData);
+
+                // Show player
+                showPlayer();
+                updateUI();
+                initAudioPlayer();
+
+                // Auto-play after a short delay
+                setTimeout(() => {
+                    player.play();
+                    document.getElementById('play-btn').textContent = '⏸';
+                }, 500);
+
+            } catch (error) {
+                console.error('Failed to load story:', error);
+                document.getElementById('loading-message').textContent = 'Failed to load story. Please try again.';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get story from session storage
+            const storedStory = sessionStorage.getItem('current_story');
+            const storedOptions = sessionStorage.getItem('story_options');
+
+            if (!storedStory) {
+                window.location.href = 'stories.html';
+                return;
+            }
+
+            story = JSON.parse(storedStory);
+            storyOptions = storedOptions ? JSON.parse(storedOptions) : { duration: 5, voice: 'female' };
+
+            console.log('📖 Story:', story);
+            console.log('⚙️ Options:', storyOptions);
+
+            loadStory();
+        });
+    </script>
+</body>
+
+</html>

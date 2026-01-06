@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Settings - StarryStories">
+    <title>Settings - StarryStories</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/components.css">
+
+    <style>
+        .page-container {
+            min-height: 100vh;
+            padding: var(--spacing-xl) var(--spacing-m);
+            padding-top: 80px;
+        }
+
+        .settings-section {
+            max-width: 600px;
+            margin: 0 auto var(--spacing-xl);
+        }
+
+        .section-title {
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--spacing-s);
+            padding-left: var(--spacing-s);
+        }
+
+        .settings-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-m);
+            overflow: hidden;
+        }
+
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-m) var(--spacing-l);
+            border-bottom: 1px solid var(--divider);
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .settings-item-left {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-m);
+        }
+
+        .settings-icon {
+            font-size: 20px;
+            width: 32px;
+            text-align: center;
+        }
+
+        .settings-label {
+            font-size: var(--font-size-body);
+            color: var(--text-primary);
+        }
+
+        .settings-value {
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+        }
+
+        .settings-arrow {
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+
+        /* App info */
+        .app-info {
+            text-align: center;
+            padding: var(--spacing-xxl);
+            color: var(--text-secondary);
+        }
+
+        .app-logo {
+            font-size: 48px;
+            margin-bottom: var(--spacing-m);
+        }
+
+        .app-name {
+            font-size: var(--font-size-heading);
+            font-weight: var(--font-weight-semibold);
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .app-version {
+            font-size: var(--font-size-small);
+        }
+
+        .app-tagline {
+            font-size: var(--font-size-small);
+            margin-top: var(--spacing-l);
+            font-style: italic;
+        }
+
+        /* Background */
+        .bg-gradient {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(91, 124, 250, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+
+    <!-- Navigation -->
+    <nav class="nav-header">
+        <a href="categories.html" class="nav-back">← Back</a>
+        <span class="nav-title">Settings</span>
+        <div style="width: 60px;"></div>
+    </nav>
+
+    <main class="page-container">
+        <!-- Preferences -->
+        <section class="settings-section animate-on-scroll fade-up">
+            <div class="section-title">Preferences</div>
+            <div class="settings-card">
+                <div class="settings-item" onclick="window.location.href='language.html'">
+                    <div class="settings-item-left">
+                        <span class="settings-icon">🌍</span>
+                        <span class="settings-label">Language</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: var(--spacing-s);">
+                        <span class="settings-value" id="current-language">English</span>
+                        <span class="settings-arrow">›</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Support -->
+        <section class="settings-section animate-on-scroll fade-up">
+            <div class="section-title">Support</div>
+            <div class="settings-card">
+                <a href="https://ashlaycyriac.github.io/StarryStories/support.html" target="_blank"
+                    class="settings-item" style="text-decoration: none;">
+                    <div class="settings-item-left">
+                        <span class="settings-icon">💬</span>
+                        <span class="settings-label">Contact Support</span>
+                    </div>
+                    <span class="settings-arrow">›</span>
+                </a>
+                <a href="https://ashlaycyriac.github.io/StarryStories/privacy.html" target="_blank"
+                    class="settings-item" style="text-decoration: none;">
+                    <div class="settings-item-left">
+                        <span class="settings-icon">🔒</span>
+                        <span class="settings-label">Privacy Policy</span>
+                    </div>
+                    <span class="settings-arrow">›</span>
+                </a>
+                <a href="https://ashlaycyriac.github.io/StarryStories/terms.html" target="_blank" class="settings-item"
+                    style="text-decoration: none;">
+                    <div class="settings-item-left">
+                        <span class="settings-icon">📄</span>
+                        <span class="settings-label">Terms of Service</span>
+                    </div>
+                    <span class="settings-arrow">›</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- App Info -->
+        <section class="app-info animate-on-scroll fade-up">
+            <div class="app-logo">🌟</div>
+            <div class="app-name">StarryStories</div>
+            <div class="app-version">Web Version 1.0</div>
+            <div class="app-tagline">Sweet dreams start with great stories</div>
+        </section>
+    </main>
+
+    <script src="js/storage.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/animations.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const langCode = Storage.getLanguage() || 'en';
+            const lang = Data.getLanguageByCode(langCode);
+            if (lang) {
+                document.getElementById('current-language').textContent = lang.nativeName;
+            }
+
+            Animations.initScrollAnimations();
+        });
+    </script>
+</body>
+
+</html>

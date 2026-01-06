@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Choose a story category - StarryStories">
+    <title>Categories - StarryStories</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/components.css">
+
+    <style>
+        .page-container {
+            min-height: 100vh;
+            padding: var(--spacing-xl) var(--spacing-m);
+            padding-top: 80px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .page-title {
+            font-size: var(--font-size-heading);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .current-language {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-m);
+            background: var(--bg-surface);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-m);
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: var(--spacing-m);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .category-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-s);
+            padding: var(--spacing-l);
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-m);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            min-height: 140px;
+            text-align: center;
+        }
+
+        .category-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md), var(--shadow-glow);
+        }
+
+        .category-emoji {
+            font-size: 40px;
+            line-height: 1;
+        }
+
+        .category-label {
+            font-size: var(--font-size-small);
+            font-weight: var(--font-weight-medium);
+            color: var(--text-primary);
+        }
+
+        /* Background */
+        .bg-gradient {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(91, 124, 250, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @media (max-width: 480px) {
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="particles-container"></div>
+
+    <!-- Navigation -->
+    <nav class="nav-header">
+        <a href="language.html" class="nav-back">← Back</a>
+        <span class="nav-title">Categories</span>
+        <div style="width: 60px;"></div>
+    </nav>
+
+    <main class="page-container">
+        <header class="page-header animate-on-scroll">
+            <div class="current-language" id="current-language">
+                <span>🌍</span>
+                <span id="language-name">English</span>
+            </div>
+            <h1 class="page-title">Choose a Category</h1>
+        </header>
+
+        <div class="categories-grid animate-stagger" id="categories-grid"></div>
+    </main>
+
+    <script src="js/storage.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/animations.js"></script>
+    <script>
+        // Get language with fallback
+        const language = Storage.getLanguage() || 'en';
+        console.log('📱 Current language:', language);
+
+        function renderCategories() {
+            try {
+                console.log('🔄 Rendering categories...');
+                console.log('📦 Data object:', window.Data);
+                
+                if (!window.Data || !window.Data.getCategoriesForLanguage) {
+                    console.error('❌ Data module not loaded!');
+                    // Fallback: render hardcoded categories
+                    renderFallbackCategories();
+                    return;
+                }
+                
+                const categories = Data.getCategoriesForLanguage(language);
+                console.log('📋 Categories for', language, ':', categories);
+                
+                const grid = document.getElementById('categories-grid');
+                
+                if (!categories || categories.length === 0) {
+                    console.error('❌ No categories returned!');
+                    renderFallbackCategories();
+                    return;
+                }
+
+                grid.innerHTML = categories.map((cat, index) => `
+                    <div class="category-card animate-on-scroll scale-in" 
+                         style="animation-delay: ${index * 50}ms"
+                         onclick="selectCategory('${cat.id}')">
+                        <span class="category-emoji">${cat.icon}</span>
+                        <span class="category-label">${cat.label}</span>
+                    </div>
+                `).join('');
+                
+                console.log('✅ Rendered', categories.length, 'categories');
+                
+                // Re-init scroll animations for new elements
+                if (window.Animations) {
+                    Animations.initScrollAnimations();
+                }
+            } catch (error) {
+                console.error('❌ Error rendering categories:', error);
+                renderFallbackCategories();
+            }
+        }
+        
+        // Fallback if Data module fails to load
+        function renderFallbackCategories() {
+            const fallbackCategories = [
+                { id: 'calm_bedtime', icon: '🌙', label: 'Calm Bedtime' },
+                { id: 'fantasy_soft', icon: '✨', label: 'Soft Fantasy' },
+                { id: 'animal_friends', icon: '🐰', label: 'Animal Friends' },
+                { id: 'family_love', icon: '❤️', label: 'Family Love' },
+                { id: 'moral_values', icon: '⭐', label: 'Moral Values' },
+                { id: 'self_confidence', icon: '💪', label: 'Self Confidence' },
+                { id: 'gratitude_and_kindness', icon: '🙏', label: 'Gratitude & Kindness' },
+                { id: 'nature_and_world', icon: '🌿', label: 'Nature & World' },
+                { id: 'village_and_home', icon: '🏡', label: 'Village & Home' },
+                { id: 'dream_journeys', icon: '🌈', label: 'Dream Journeys' },
+                { id: 'christian_stories', icon: '✝️', label: 'Christian Stories' },
+                { id: 'hindu_stories', icon: '🕉️', label: 'Hindu Stories' },
+                { id: 'islamic_stories', icon: '☪️', label: 'Islamic Stories' }
+            ];
+            
+            const grid = document.getElementById('categories-grid');
+            grid.innerHTML = fallbackCategories.map((cat, index) => `
+                <div class="category-card" 
+                     style="animation-delay: ${index * 50}ms"
+                     onclick="selectCategory('${cat.id}')">
+                    <span class="category-emoji">${cat.icon}</span>
+                    <span class="category-label">${cat.label}</span>
+                </div>
+            `).join('');
+            
+            console.log('✅ Rendered fallback categories');
+        }
+
+        function selectCategory(categoryId) {
+            console.log('📌 Selected category:', categoryId);
+            Storage.saveCategory(categoryId);
+            window.location.href = `stories.html?category=${categoryId}`;
+        }
+
+        function updateLanguageDisplay() {
+            try {
+                if (window.Data && Data.getLanguageByCode) {
+                    const lang = Data.getLanguageByCode(language);
+                    if (lang) {
+                        document.getElementById('language-name').textContent = lang.nativeName;
+                    }
+                }
+            } catch (e) {
+                console.warn('Could not update language display:', e);
+            }
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📄 DOM loaded, initializing categories page...');
+            updateLanguageDisplay();
+            renderCategories();
+            
+            if (window.Animations) {
+                Animations.initBackgroundEffects();
+            }
+        });
+        
+        // Also try rendering immediately in case DOMContentLoaded already fired
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            console.log('📄 Document already ready, rendering now...');
+            setTimeout(() => {
+                updateLanguageDisplay();
+                renderCategories();
+            }, 100);
+        }
+    </script>
+</body>
+
+</html>

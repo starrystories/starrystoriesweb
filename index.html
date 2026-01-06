@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="StarryStories - AI-powered bedtime stories for children in multiple languages">
+    <meta name="theme-color" content="#0E0F13">
+    <title>StarryStories - Magical Bedtime Stories</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/components.css">
+
+    <style>
+        /* Landing page specific styles */
+        .landing-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .landing-content {
+            text-align: center;
+            z-index: 10;
+            max-width: 600px;
+        }
+
+        .landing-logo {
+            font-size: 64px;
+            margin-bottom: var(--spacing-l);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .landing-title {
+            font-size: 42px;
+            font-weight: var(--font-weight-bold);
+            background: linear-gradient(135deg, #EAEAF0 0%, #5B7CFA 50%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: var(--spacing-m);
+        }
+
+        .landing-subtitle {
+            font-size: var(--font-size-subheading);
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xxl);
+            line-height: var(--line-height-relaxed);
+        }
+
+        .landing-cta {
+            padding: var(--spacing-l) var(--spacing-xxl);
+            font-size: var(--font-size-subheading);
+        }
+
+        .landing-features {
+            display: flex;
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-xxl);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-s);
+            color: var(--text-secondary);
+            font-size: var(--font-size-small);
+        }
+
+        .feature-icon {
+            font-size: 20px;
+        }
+
+        /* Background gradient overlay */
+        .bg-gradient {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(91, 124, 250, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 100% 100%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .landing-title {
+                font-size: 32px;
+            }
+
+            .landing-subtitle {
+                font-size: var(--font-size-body);
+            }
+
+            .landing-features {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background effects -->
+    <div class="bg-gradient"></div>
+    <div class="particles-container"></div>
+
+    <!-- Main content -->
+    <main class="landing-page">
+        <div class="landing-content">
+            <div class="landing-logo animate-on-scroll">🌟</div>
+
+            <h1 class="landing-title animate-on-scroll fade-up">StarryStories</h1>
+
+            <p class="landing-subtitle animate-on-scroll fade-up">
+                AI-powered bedtime stories that spark imagination and bring sweet dreams.
+                Available in English, Indian regional languages & more.
+            </p>
+
+            <a href="language.html" class="btn btn-primary landing-cta hover-lift animate-on-scroll scale-in">
+                ✨ Get Started
+            </a>
+
+            <div class="landing-features animate-on-scroll fade-up">
+                <div class="feature-item">
+                    <span class="feature-icon">📚</span>
+                    <span>Unlimited stories</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🎧</span>
+                    <span>AI narration</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🌙</span>
+                    <span>Sleep-friendly</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="js/storage.js"></script>
+    <script src="js/animations.js"></script>
+    <script>
+        // Initialize background effects
+        document.addEventListener('DOMContentLoaded', () => {
+            Animations.initBackgroundEffects();
+
+            // Check if user already has language selected
+            const savedLanguage = Storage.getLanguage();
+            if (savedLanguage) {
+                // Could redirect to categories or stories
+                // For now, let user go through flow
+            }
+        });
+    </script>
+</body>
+
+</html>

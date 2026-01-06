@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Choose your language - StarryStories">
+    <title>Choose Language - StarryStories</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/components.css">
+
+    <style>
+        .page-container {
+            min-height: 100vh;
+            padding: var(--spacing-xl) var(--spacing-m);
+            padding-top: 80px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .page-icon {
+            font-size: 48px;
+            margin-bottom: var(--spacing-m);
+        }
+
+        .page-title {
+            font-size: var(--font-size-app-title);
+            margin-bottom: var(--spacing-s);
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+        }
+
+        .language-section {
+            max-width: 600px;
+            margin: 0 auto var(--spacing-m);
+        }
+
+        /* English - Direct selection (no header) */
+        .english-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-l);
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            border-radius: var(--radius-m);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            margin-bottom: var(--spacing-l);
+        }
+
+        .english-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateX(4px);
+        }
+
+        .english-card.selected {
+            border-color: var(--accent-primary);
+            background: rgba(91, 124, 250, 0.1);
+        }
+
+        .english-card .language-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-m);
+        }
+
+        .english-flag {
+            font-size: 32px;
+        }
+
+        .english-text .language-native {
+            font-size: var(--font-size-subheading);
+            font-weight: var(--font-weight-semibold);
+        }
+
+        .english-text .language-english {
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+        }
+
+        /* Collapsible sections */
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-m) var(--spacing-l);
+            background: var(--bg-surface);
+            border: 1px solid var(--divider);
+            border-radius: var(--radius-m);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            margin-bottom: 0;
+        }
+
+        .collapsible-header:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .collapsible-header.open {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            border-bottom: none;
+        }
+
+        .collapsible-header .header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-s);
+        }
+
+        .section-emoji {
+            font-size: 24px;
+        }
+
+        .section-title {
+            font-size: var(--font-size-body);
+            font-weight: var(--font-weight-semibold);
+        }
+
+        .collapse-icon {
+            font-size: 12px;
+            color: var(--text-secondary);
+            transition: transform var(--transition-fast);
+        }
+
+        .collapsible-header.open .collapse-icon {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: var(--bg-surface);
+            border: 1px solid var(--divider);
+            border-top: none;
+            border-bottom-left-radius: var(--radius-m);
+            border-bottom-right-radius: var(--radius-m);
+        }
+
+        .collapsible-content.open {
+            max-height: 500px;
+        }
+
+        .language-grid {
+            display: grid;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-s);
+        }
+
+        .language-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-m);
+            background: var(--bg-surface-alt);
+            border: 1px solid transparent;
+            border-radius: var(--radius-s);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .language-card:hover {
+            border-color: var(--accent-primary);
+            background: rgba(91, 124, 250, 0.05);
+        }
+
+        .language-card.selected {
+            border-color: var(--accent-primary);
+            background: rgba(91, 124, 250, 0.15);
+        }
+
+        .language-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .language-native {
+            font-size: var(--font-size-body);
+            font-weight: var(--font-weight-medium);
+        }
+
+        .language-english {
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+        }
+
+        .language-check {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--divider);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: transparent;
+            transition: all var(--transition-fast);
+        }
+
+        .language-card.selected .language-check,
+        .english-card.selected .language-check {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: white;
+        }
+
+        .coming-soon-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: var(--bg-surface-alt);
+            border-radius: var(--radius-xs);
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-left: var(--spacing-s);
+        }
+
+        .language-section.disabled .collapsible-header {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .language-section.disabled .language-card {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Background */
+        .bg-gradient {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(91, 124, 250, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="particles-container"></div>
+
+    <!-- Navigation -->
+    <nav class="nav-header">
+        <a href="index.html" class="nav-back">
+            ← Back
+        </a>
+        <span class="nav-title">Choose Language</span>
+        <div style="width: 60px;"></div>
+    </nav>
+
+    <main class="page-container">
+        <header class="page-header animate-on-scroll">
+            <div class="page-icon">🌍</div>
+            <h1 class="page-title">Choose Your Language</h1>
+            <p class="page-subtitle">Stories will be narrated in your selected language</p>
+        </header>
+
+        <!-- English - Direct Selection -->
+        <section class="language-section animate-on-scroll fade-up" id="english-section">
+            <div class="english-card hover-lift" onclick="selectLanguage('en')">
+                <div class="language-info">
+                    <span class="english-flag">🇬🇧</span>
+                    <div class="english-text">
+                        <div class="language-native">English</div>
+                        <div class="language-english">English</div>
+                    </div>
+                </div>
+                <div class="language-check">✓</div>
+            </div>
+        </section>
+
+        <!-- Indian Languages - Collapsible -->
+        <section class="language-section animate-on-scroll fade-up" id="indian-section">
+            <div class="collapsible-header" onclick="toggleSection('indian')">
+                <div class="header-left">
+                    <span class="section-emoji">🇮🇳</span>
+                    <span class="section-title">Indian Languages</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="collapsible-content" id="indian-content">
+                <div class="language-grid" id="indian-languages"></div>
+            </div>
+        </section>
+
+        <!-- Other Languages - Collapsible (coming soon) -->
+        <section class="language-section disabled animate-on-scroll fade-up" id="other-section">
+            <div class="collapsible-header" onclick="toggleSection('other')">
+                <div class="header-left">
+                    <span class="section-emoji">🌐</span>
+                    <span class="section-title">Other Languages</span>
+                    <span class="coming-soon-badge">Coming Soon</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="collapsible-content" id="other-content">
+                <div class="language-grid" id="other-languages"></div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/storage.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/animations.js"></script>
+    <script>
+        let selectedLanguage = Storage.getLanguage();
+
+        function createLanguageCard(lang, isDisabled = false) {
+            const isSelected = selectedLanguage === lang.code;
+            return `
+                <div class="language-card ${isSelected ? 'selected' : ''}" 
+                     data-code="${lang.code}" 
+                     ${isDisabled ? '' : `onclick="selectLanguage('${lang.code}')"`}>
+                    <div class="language-info">
+                        <span class="language-native">${lang.nativeName}</span>
+                        <span class="language-english">${lang.name}</span>
+                    </div>
+                    <div class="language-check">✓</div>
+                </div>
+            `;
+        }
+
+        function renderLanguages() {
+            // Update English card selection state
+            const englishCard = document.querySelector('.english-card');
+            if (selectedLanguage === 'en') {
+                englishCard.classList.add('selected');
+            }
+
+            // Indian
+            document.getElementById('indian-languages').innerHTML =
+                Data.LANGUAGES.indian.map(l => createLanguageCard(l)).join('');
+
+            // Other (disabled)
+            document.getElementById('other-languages').innerHTML =
+                Data.LANGUAGES.other.map(l => createLanguageCard(l, true)).join('');
+        }
+
+        function toggleSection(section) {
+            const header = document.querySelector(`#${section}-section .collapsible-header`);
+            const content = document.getElementById(`${section}-content`);
+
+            header.classList.toggle('open');
+            content.classList.toggle('open');
+        }
+
+        function selectLanguage(code) {
+            selectedLanguage = code;
+            Storage.saveLanguage(code);
+
+            // Update UI - all cards
+            document.querySelectorAll('.language-card').forEach(card => {
+                card.classList.toggle('selected', card.dataset.code === code);
+            });
+
+            // Update English card
+            const englishCard = document.querySelector('.english-card');
+            englishCard.classList.toggle('selected', code === 'en');
+
+            // Navigate to categories after brief delay
+            setTimeout(() => {
+                window.location.href = 'categories.html';
+            }, 300);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderLanguages();
+            Animations.initBackgroundEffects();
+        });
+    </script>
+</body>
+
+</html>

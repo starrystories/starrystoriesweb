@@ -3,8 +3,8 @@
  * Backend communication with Basic Auth
  */
 
-// Use Cloud Run Proxy for HTTPS
-const API_BASE_URL = 'https://starry-proxy-aza7qtijlq-el.a.run.app';
+// Use GCP VM directly with valid HTTPS (via Caddy + sslip.io)
+const API_BASE_URL = 'https://34.47.249.168.sslip.io';
 
 // Encoded credentials (not secure, just obfuscated)
 const _e = (s) => atob(s).split('').reverse().join('');

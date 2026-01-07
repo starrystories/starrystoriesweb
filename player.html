@@ -307,7 +307,7 @@
     </main>
 
     <script src="js/storage.js"></script>
-    <script src="js/api.js?v=9"></script>
+    <script src="js/api.js?v=10"></script>
     <script src="js/audio.js?v=4"></script>
     <script>
         const language = Storage.getLanguage() || 'en';
@@ -388,7 +388,10 @@
                 // Already a URL string
                 imageUrl = imageObj;
                 if (!imageUrl.startsWith('http') && !imageUrl.startsWith('data:')) {
-                    imageUrl = `http://34.47.249.168:3001${imageUrl}`;
+                    if (imageUrl.startsWith('/')) {
+                        // Use the configured API base URL (HTTPS)
+                        imageUrl = `${window.API.BASE_URL}${imageUrl}`;
+                    }
                 }
             } else if (imageObj && imageObj.imageData) {
                 // Base64 image data from cache

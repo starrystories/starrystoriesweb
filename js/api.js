@@ -21,11 +21,14 @@ const API_CREDENTIALS = {
 // Generate auth header
 const authHeader = 'Basic ' + btoa(`${API_CREDENTIALS.username}:${API_CREDENTIALS.password}`);
 
-function getAuthHeaders() {
-    return {
-        'Authorization': authHeader,
-        'Content-Type': 'application/json'
+function getAuthHeaders(includeContentType = true) {
+    const headers = {
+        'Authorization': authHeader
     };
+    if (includeContentType) {
+        headers['Content-Type'] = 'application/json';
+    }
+    return headers;
 }
 
 /**
@@ -47,13 +50,16 @@ async function getStories(language, category, excludeTitles = []) {
 
     const response = await fetch(url, {
         headers: {
-            ...getAuthHeaders(),
+            ...getAuthHeaders(false), // No Content-Type for GET
             'Cache-Control': 'no-cache'
         }
     });
 
     if (!response.ok) {
-        throw new Error('Failed to fetch stories');
+        if (response.status === 401) {
+            console.error('🔒 Auth Failed:', response.statusText);
+        }
+        throw new Error(`Failed to fetch stories: ${response.status} ${response.statusText}`);
     }
 
     return response.json();
@@ -90,7 +96,7 @@ async function playStory(story, language, duration = 5, voice = 'female', childN
 
     const response = await fetch(endpoint, {
         method: 'POST',
-        headers: getAuthHeaders(),
+        headers: getAuthHeaders(true),
         body: JSON.stringify(payload)
     });
 
@@ -111,7 +117,7 @@ async function deviceLogin(deviceId) {
 
     const response = await fetch(endpoint, {
         method: 'POST',
-        headers: getAuthHeaders(),
+        headers: getAuthHeaders(true),
         body: JSON.stringify({ deviceId })
     });
 

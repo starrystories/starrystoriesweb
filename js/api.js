@@ -3,7 +3,8 @@
  * Backend communication with Basic Auth
  */
 
-const API_BASE_URL = 'http://34.47.249.168:3001';
+// Use Cloud Run Proxy for HTTPS
+const API_BASE_URL = 'https://starry-proxy-aza7qtijlq-el.a.run.app';
 
 // Encoded credentials (not secure, just obfuscated)
 const _e = (s) => atob(s).split('').reverse().join('');

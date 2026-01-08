@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contact Support - Starry Stories">
+    <title>Contact Us - Starry Stories</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/components.css">
+
+    <style>
+        .page-container {
+            min-height: 100vh;
+            padding: var(--spacing-xl) var(--spacing-m);
+            padding-top: 80px;
+            padding-bottom: 60px;
+        }
+
+        .support-content {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .support-icon {
+            font-size: 64px;
+            margin-bottom: var(--spacing-l);
+        }
+
+        .support-title {
+            font-size: var(--font-size-title);
+            font-weight: var(--font-weight-bold);
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-s);
+        }
+
+        .support-subtitle {
+            font-size: var(--font-size-body);
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xxl);
+            line-height: 1.6;
+        }
+
+        .contact-cards {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-m);
+        }
+
+        .contact-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-m);
+            padding: var(--spacing-l);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-m);
+            transition: all var(--transition-fast);
+        }
+
+        .contact-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .contact-icon {
+            font-size: 32px;
+            width: 50px;
+            text-align: center;
+        }
+
+        .contact-info {
+            text-align: left;
+        }
+
+        .contact-label {
+            font-size: var(--font-size-body);
+            font-weight: var(--font-weight-semibold);
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .contact-value {
+            font-size: var(--font-size-small);
+            color: var(--accent-primary);
+        }
+
+        .faq-section {
+            margin-top: var(--spacing-xxl);
+            text-align: left;
+        }
+
+        .section-title {
+            font-size: var(--font-size-heading);
+            font-weight: var(--font-weight-semibold);
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-l);
+            text-align: center;
+        }
+
+        .faq-item {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-m);
+            padding: var(--spacing-l);
+            margin-bottom: var(--spacing-m);
+        }
+
+        .faq-question {
+            font-size: var(--font-size-body);
+            font-weight: var(--font-weight-semibold);
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-s);
+        }
+
+        .faq-answer {
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .support-footer {
+            text-align: center;
+            margin-top: var(--spacing-xxl);
+            padding-top: var(--spacing-l);
+            border-top: 1px solid var(--divider);
+            color: var(--text-secondary);
+            font-size: var(--font-size-small);
+        }
+
+        .bg-gradient {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(91, 124, 250, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        a {
+            color: var(--accent-primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+
+    <!-- Navigation -->
+    <nav class="nav-header">
+        <a href="index.html" class="nav-back">← Home</a>
+        <span class="nav-title">Support</span>
+        <div style="width: 60px;"></div>
+    </nav>
+
+    <main class="page-container">
+        <div class="support-content animate-on-scroll fade-up">
+            <div class="support-icon">💬</div>
+            <h1 class="support-title">How can we help?</h1>
+            <p class="support-subtitle">
+                We're here to make your bedtime story experience magical. Reach out if you have questions, feedback, or
+                need assistance.
+            </p>
+
+            <div class="contact-cards">
+                <a href="mailto:ashlaycyriac@gmail.com" class="contact-card">
+                    <span class="contact-icon">📧</span>
+                    <div class="contact-info">
+                        <div class="contact-label">Email Support</div>
+                        <div class="contact-value">ashlaycyriac@gmail.com</div>
+                    </div>
+                </a>
+
+                <a href="mailto:ashlaycyriac@gmail.com?subject=Bug%20Report%20-%20Starry%20Stories"
+                    class="contact-card">
+                    <span class="contact-icon">🐛</span>
+                    <div class="contact-info">
+                        <div class="contact-label">Report a Bug</div>
+                        <div class="contact-value">Help us improve the app</div>
+                    </div>
+                </a>
+
+                <a href="mailto:ashlaycyriac@gmail.com?subject=Feature%20Request%20-%20Starry%20Stories"
+                    class="contact-card">
+                    <span class="contact-icon">💡</span>
+                    <div class="contact-info">
+                        <div class="contact-label">Feature Request</div>
+                        <div class="contact-value">Share your ideas with us</div>
+                    </div>
+                </a>
+            </div>
+
+            <section class="faq-section">
+                <h2 class="section-title">Frequently Asked Questions</h2>
+
+                <div class="faq-item">
+                    <div class="faq-question">How do I restore my subscription?</div>
+                    <div class="faq-answer">
+                        Go to Settings in the app and tap "Restore Purchases". Make sure you're signed in with the same
+                        Apple ID or Google Account used for the original purchase.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">Why is my story taking a long time to generate?</div>
+                    <div class="faq-answer">
+                        Stories are generated using AI, which typically takes 1-2 minutes for first-time plays. Once
+                        generated, stories are cached for instant playback. Look for the ⚡ icon indicating instant
+                        playback!
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">How do I cancel my subscription?</div>
+                    <div class="faq-answer">
+                        Subscriptions are managed through your App Store or Play Store account. Go to your device's
+                        Settings → Apple ID / Google → Subscriptions → Starry Stories → Cancel Subscription.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">Is the app safe for children?</div>
+                    <div class="faq-answer">
+                        Yes! We implement strict content filters on all AI-generated stories. Additionally, the app
+                        includes a Child Lock feature to prevent accidental navigation during story playback.
+                    </div>
+                </div>
+            </section>
+
+            <div class="support-footer">
+                <p>Starry Stories © 2026</p>
+                <p style="margin-top: var(--spacing-s);">
+                    <a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms of Service</a> · <a
+                        href="index.html">Home</a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/animations.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Animations.initScrollAnimations();
+        });
+    </script>
+</body>
+
+</html>
